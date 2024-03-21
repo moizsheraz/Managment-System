@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User
+from .models import *
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,3 +10,18 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
+
+
+class PostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = '__all__'
+    
+    def create(self, validated_data):
+        validated_data['author'] = self.context['request'].user
+        image = self.context['request'].FILES.get('image')
+        if image:
+            post = Post.objects.create(**validated_data)
+        else:
+            post = Post.objects.create(**validated_data)
+        return post
