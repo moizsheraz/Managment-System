@@ -13,4 +13,8 @@ urlpatterns = [
     path('update_post/<int:pk>/', views.update_post, name='update_post'),
     path('get_post/<int:pk>/', views.get_post, name='get_post'),
     path('delete_post/<int:pk>/', views.delete_post, name='delete_post'),
+
+    path('profile/<int:pk>/', views.get_profile, name='profile'),
+    path('update_profile/', views.update_profile, name='update_profile'),
+    path('delete_profile/', views.delete_profile, name='delete_profile')
 ]

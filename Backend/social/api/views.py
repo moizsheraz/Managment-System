@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.response import Response
 from rest_framework import status
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
@@ -136,5 +136,50 @@ def delete_post(request, pk):
                 post.delete()
                 return Response({'message': 'Post deleted successfully'}, status=status.HTTP_200_OK)
             return Response({'error': 'You are not authorized to delete this post'}, status=status.HTTP_401_UNAUTHORIZED)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# api view for getting user profile
+@api_view(['GET'])
+def get_profile(request, pk):
+    if request.method == 'GET':
+        try:
+            profile = User.objects.get(id=pk)
+            if profile:
+                serializer = ProfileSerializer(profile)
+                print(serializer.data)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+# api view for updating user profile
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser, FileUploadParser])
+def update_profile(request):
+    if request.method == 'PUT':
+        try:
+            profile = User.objects.get(id=request.user.id)
+            serializer = ProfileSerializer(profile, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+# api view for deleting a user
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_profile(request):
+    if request.method == 'DELETE':
+        try:
+            user = User.objects.get(id=request.user.id)
+            user.delete()
+            return Response({'message': 'User deleted successfully'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

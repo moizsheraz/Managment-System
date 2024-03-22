@@ -1,15 +1,15 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 
 
-class Profile(models.Model):
+class User(AbstractUser):
     GENDER_CHOICES = (
         ('M', 'Male'),
         ('F', 'Female'),
         ('O', 'Other'),
     )
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    username = models.CharField(max_length=100, unique=True)
     email = models.EmailField(unique=True, blank=True)
     name = models.CharField(max_length=100, blank=True)
     bio = models.TextField(blank=True)
@@ -17,10 +17,9 @@ class Profile(models.Model):
     address = models.CharField(max_length=100, blank=True)
     gender = models.CharField(choices=GENDER_CHOICES, max_length=1, blank=True)
     profile_pic = models.ImageField(upload_to='profile_pics', blank=True, default='avatar.svg')
-    
 
     def __str__(self):
-        return self.user.username
+        return self.username
 
 
 class Post(models.Model):
