@@ -13,13 +13,15 @@ SECRET_KEY = 'django-insecure-@(49xg!m^mwdo-6l2u&in=k5t%ua0mkmuzq^2w02r%vgi0kqo*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 AUTH_USER_MODEL = 'api.User'
 
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -27,9 +29,19 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'corsheaders',
     'api',
+    'comments',
     'rest_framework.authtoken',
 ]
+
+
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': "channels.layers.InMemoryChannelLayer"
+    }
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -39,9 +51,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'social.urls'
+
+CORS_ALLOW_ALL_ORIGINS = True 
 
 TEMPLATES = [
     {
@@ -60,6 +75,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'social.wsgi.application'
+ASGI_APPLICATION = 'social.asgi.application'
 
 
 # Database
