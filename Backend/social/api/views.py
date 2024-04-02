@@ -183,3 +183,22 @@ def delete_profile(request):
             return Response({'message': 'User deleted successfully'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+
+# api view for searching posts, tags, and users
+@api_view(['GET'])
+def search(request):
+    if request.method == 'GET':
+        query = request.query_params.get('query')
+        posts = Post.objects.filter(caption__icontains=query) | Post.objects.filter(tag__tag__icontains=query) | Post.objects.filter(author__username__icontains=query)
+        
+        post_serializer = PostSerializer(posts, many=True)
+        
+        response = {
+            'posts': post_serializer.data
+        }
+        
+        return Response(response, status=status.HTTP_200_OK)
+    
+    return Response({'error': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)
