@@ -83,22 +83,38 @@ ASGI_APPLICATION = 'social.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "social",
-        "USER": "ZainAli121",
-        "PASSWORD": "12345678",
-        "HOST": "127.0.0.1",
-        "PORT": "3306",
+# DATABASES = {
+#     'default': {
+#         "ENGINE": "django.db.backends.mysql",
+#         "NAME": "social",
+#         "USER": "ZainAli121",
+#         "PASSWORD": "12345678",
+#         "HOST": "127.0.0.1",
+#         "PORT": "3306",
 
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+#         'OPTIONS': {
+#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+#             'charset': 'utf8mb4',
+#             'use_unicode': True,
+#             'client_flag': pymysql.constants.CLIENT.MULTI_STATEMENTS,
+#         },
+#     }   
+# }
+
+DATABASES = {
+   'default': {
+       'ENGINE': 'django.db.backends.mysql',
+       'NAME': 'railway',
+       'USER': 'root',
+       'PASSWORD': 'sgvkbvLDSFPFymWWxbUrqATJueXzcoNc',
+       'HOST': 'viaduct.proxy.rlwy.net',
+       'PORT': '44071',
+       'OPTIONS': {
             'charset': 'utf8mb4',
-            'use_unicode': True,
-            'client_flag': pymysql.constants.CLIENT.MULTI_STATEMENTS,
-        },
-    }
+            'sql_mode': 'traditional',
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+        }
+   }
 }
 
 
