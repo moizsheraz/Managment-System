@@ -18,8 +18,11 @@ def comment_view(request, post_id):
         return Response(serializer.data)
 
     if request.method == 'POST':
-        serializer = CommentSerializer(data=request.data)
+        mutable_data = request.data.copy()
+        mutable_data['post'] = post.id
+        mutable_data['c_auther'] = request.user.id
+        serializer = CommentSerializer(data=mutable_data, context={'request': request, 'post_id': post})
         if serializer.is_valid():
-            serializer.save(post=post, c_auther=request.user)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
