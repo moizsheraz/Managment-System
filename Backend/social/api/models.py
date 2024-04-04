@@ -10,7 +10,7 @@ class User(AbstractUser):
     )
 
     username = models.CharField(max_length=100, unique=True)
-    email = models.EmailField(unique=True, blank=True)
+    email = models.EmailField(blank=True)
     name = models.CharField(max_length=100, blank=True)
     bio = models.TextField(blank=True)
     phone_number = models.CharField(max_length= 200, blank=True)
