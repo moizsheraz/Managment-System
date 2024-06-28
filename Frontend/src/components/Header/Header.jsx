@@ -1,38 +1,69 @@
-import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-
+import React from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../../features/auth/authSlice';
 
 export default function Header() {
-    const navItems = [
-        {
-            name: "Home",
-            route: "/",
-            active : true
-        }, 
-        {
-            name: "Profile",
-            route: "/profile",
-            active : false
-        },
-        {
-            name: "Login",
-            route: "/login",
-            active : false
-        },
-        {
-            name: "Logout",
-            route: "/logout",
-            active : false
-        },
-        {
-            name: "Register",
-            route: "/register",
-            active : false
-        }
-    ]
-    return (
-        <div>
-            
+  const { isAuthenticated } = useSelector((state) => state.auth);
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const navItems = [
+    {
+      name: "Home",
+      route: "/",
+      show: true
+    },
+    {
+      name: "Profile",
+      route: "/profile",
+      show: isAuthenticated
+    },
+    {
+      name: "Login",
+      route: "/login",
+      show: !isAuthenticated
+    },
+    {
+      name: "Logout",
+      route: "/logout",
+      show: isAuthenticated
+    },
+    {
+      name: "Register",
+      route: "/register",
+      show: !isAuthenticated
+    }
+  ];
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/');
+  };
+
+  return (
+    <header className="bg-gray-800 text-white p-4 shadow-md">
+      <nav className="container mx-auto flex justify-between items-center">
+        <div className="text-2xl font-bold">
+          <Link to="/">MyApp</Link>
         </div>
-    )
+        <ul className="flex space-x-4">
+          {navItems.filter(item => item.show).map((item, index) => (
+            <li key={index} className={`${location.pathname === item.route ? 'border-b-2 border-white' : ''}`}>
+              {item.name === "Logout" ? (
+                <button onClick={handleLogout} className="hover:text-gray-400 transition duration-200">
+                  {item.name}
+                </button>
+              ) : (
+                <Link to={item.route} className="hover:text-gray-400 transition duration-200">
+                  {item.name}
+                </Link>
+              )}
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </header>
+  );
 }

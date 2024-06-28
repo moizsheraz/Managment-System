@@ -39,31 +39,31 @@ def register_user(request):
 
 
 # api view for logging in a user
-@api_view(['POST'])
-def login_user(request):
-    if request.method == 'POST':
-        username = request.data.get('username')
-        password = request.data.get('password')
+# @api_view(['POST'])
+# def login_user(request):
+#     if request.method == 'POST':
+#         username = request.data.get('username')
+#         password = request.data.get('password')
         
-        user = authenticate(username=username, password=password)
+#         user = authenticate(username=username, password=password)
 
-        if user:
-            token, created = Token.objects.get_or_create(user=user)
-            return Response({'token': token.key}, status=status.HTTP_200_OK)
+#         if user:
+#             token, created = Token.objects.get_or_create(user=user)
+#             return Response({'token': token.key}, status=status.HTTP_200_OK)
 
-        return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+#         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
     
 
 # api view for logging out a user
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def user_logout(request):
-    if request.method == 'POST':
-        try:
-            request.user.auth_token.delete()
-            return Response({'message': 'Successfully logged out.'}, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+# @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+# def user_logout(request):
+#     if request.method == 'POST':
+#         try:
+#             request.user.auth_token.delete()
+#             return Response({'message': 'Successfully logged out.'}, status=status.HTTP_200_OK)
+#         except Exception as e:
+#             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # api view for creating a post
