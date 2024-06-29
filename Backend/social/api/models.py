@@ -26,12 +26,15 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     caption = models.TextField(blank=True)  # e.g: any motivational quote
     tag = models.ForeignKey('Tag', max_length=100, on_delete=models.SET_NULL, null=True)         # e.g: happy, excited, sad
-    image = models.ImageField(upload_to='post_pics', blank=True, default='default.jpg')
+    image = models.ImageField(upload_to='post_pics', blank=True, null=True)
     date_posted = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return f"{self.author.username}'s post"
+    
+    class Meta:
+        ordering = ['-date_updated','-date_posted']
 
 
 class Tag(models.Model):

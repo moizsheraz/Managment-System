@@ -202,3 +202,22 @@ def search(request):
         return Response(response, status=status.HTTP_200_OK)
     
     return Response({'error': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# api call for getting the tags with id and name
+@api_view(['GET'])
+def get_tags(request):
+    if request.method == 'GET':
+        tags = Tag.objects.all()
+        serializer = TagSerializer(tags, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response({'error': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)
+
+# api call for getting user_id and username
+@api_view(['GET'])
+def get_users(request):
+    if request.method == 'GET':
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response({'error': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)

@@ -10,11 +10,17 @@ urlpatterns = [
     path("token/obtain/", TokenObtainPairView.as_view(), name="token_create"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
 
+    path('get_users/', views.get_users, name='get_user'),
+
+
     path('create_post/', views.create_post, name='create_post'),
     path('get_posts/', views.get_posts, name='get_posts'),
     path('update_post/<int:pk>/', views.update_post, name='update_post'),
     path('get_post/<int:pk>/', views.get_post, name='get_post'),
     path('delete_post/<int:pk>/', views.delete_post, name='delete_post'),
+
+    path('get_tags/', views.get_tags, name='get_tags'),
+
 
     path('profile/<int:pk>/', views.get_profile, name='profile'),
     path('update_profile/', views.update_profile, name='update_profile'),
