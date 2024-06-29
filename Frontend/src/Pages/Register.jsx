@@ -1,8 +1,8 @@
 import React from "react";
 import Auth_Form from "../components/Auth/Auth_Form";
 
-export default function Login() {
+export default function Register() {
     return (
-        <Auth_Form method="login" endpoint="/api/token/obtain/" />
+        <Auth_Form method="signup" endpoint="/api/register/" />
     )
 }
