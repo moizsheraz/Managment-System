@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from "react";
-import api from "../api";
+import api from "../../api";
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function Posts() {
     const [posts, setPosts] = useState([]);
     const [users, setUsers] = useState([]);
     const [tags, setTags] = useState([]);
+    const [menuVisible, setMenuVisible] = useState({});
+
+    const loggedInUser = useSelector((state) => state.auth);
+    console.log(loggedInUser);
 
     useEffect(() => {
         // fetch posts
         api.get('/api/get_posts/')
             .then((response) => {
-                console.log(response.data);
                 setPosts(response.data);
             })
             .catch((error) => {
@@ -45,17 +50,52 @@ export default function Posts() {
 
     }, []);
 
+    const handleDelete = async (id) => {
+        try {
+            await api.delete(`api/delete_post/${id}/`);
+            const newPosts = posts.filter(post => post.id !== id);
+            setPosts(newPosts);
+        } catch (error) {
+            console.error("There was an error deleting the post!", error);
+        }
+    };
+
+    const toggleMenu = (id) => {
+        setMenuVisible(prevState => ({
+            ...prevState,
+            [id]: !prevState[id]
+        }));
+    };
+
     return (
         <div className="container mx-auto p-4">
             <h1 className="text-3xl font-bold mb-6 text-center">Posts</h1>
             <div className="space-y-6">
                 {posts.map(post => (
-                    <div key={post.id} className="bg-white rounded-lg shadow-lg p-6 max-w-xl mx-auto">
+                    <div key={post.id} className="bg-white rounded-lg shadow-lg p-6 max-w-xl mx-auto relative">
                         <div className="flex items-center mb-4">
                             <img src="https://via.placeholder.com/40" alt="User avatar" className="rounded-full h-12 w-12 mr-4" />
                             <div>
                                 <p className="text-lg font-semibold">{users[post.author]} is feeling {tags[post.tag]}</p>
                                 <p className="text-sm text-gray-500">{new Date(post.date_posted).toLocaleDateString()}</p>
+                            </div>
+                            <div className="ml-auto relative">
+                                <button onClick={() => toggleMenu(post.id)} className="text-black text-2xl hover:text-gray-700">
+                                    &#x22EE;
+                                </button>
+                                {menuVisible[post.id] && (
+                                    <div className="absolute right-0 mt-2 w-48 bg-white border text-center rounded-lg shadow-lg z-10">
+                                        <Link to={`/update_post/${post.id}`} className="rounded-md block px-4 mb-1 py-2 text-gray-800 hover:bg-yellow-600 bg-yellow-500">
+                                            Update Post
+                                        </Link>
+                                        <button
+                                            onClick={() => handleDelete(post.id)}
+                                            className="rounded-md block w-full text-center px-4 py-2 text-gray-800 hover:bg-red-600 bg-red-500"
+                                        >
+                                            Delete Post
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <h2 className="text-2xl font-bold mb-2">{post.caption}</h2>

@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 # from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authtoken.models import Token
 from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 from .serializers import *
@@ -105,6 +105,7 @@ def update_post(request, pk):
 
 # api view for getting all posts
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def get_posts(request):
     if request.method == 'GET':
         posts = Post.objects.all()
@@ -188,6 +189,7 @@ def delete_profile(request):
 
 # api view for searching posts, tags, and users
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def search(request):
     if request.method == 'GET':
         query = request.query_params.get('query')
@@ -206,6 +208,7 @@ def search(request):
 
 # api call for getting the tags with id and name
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def get_tags(request):
     if request.method == 'GET':
         tags = Tag.objects.all()
@@ -215,6 +218,7 @@ def get_tags(request):
 
 # api call for getting user_id and username
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def get_users(request):
     if request.method == 'GET':
         users = User.objects.all()

@@ -21,6 +21,11 @@ export default function Header() {
       show: isAuthenticated
     },
     {
+      name: "Create Post",
+      route: "/create_post",
+      show: isAuthenticated
+    },
+    {
       name: "Login",
       route: "/login",
       show: !isAuthenticated

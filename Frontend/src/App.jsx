@@ -5,6 +5,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-
 import Login from './Pages/Login'
 import Register from './Pages/Register'
 import Home from './Pages/Home'
+import CreatePost from './Pages/CreatePost'
+import UpdatePost from './Pages/UpdatePost'
 
 
 function App() {
@@ -16,9 +18,12 @@ function App() {
 
   return (
     <Router>
-      <Home />
+      <Header />
       <Routes>
         {/* <Route path="/profile" element={<Profile />} /> */}
+        <Route path="/create_post" element={<CreatePost />} />
+        <Route path="/update_post/:id" element={<UpdatePost />} />
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/register" element={<Register />} />
