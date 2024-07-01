@@ -8,6 +8,8 @@ import Home from './Pages/Home'
 import CreatePost from './Pages/CreatePost'
 import UpdatePost from './Pages/UpdatePost'
 import UpdatePostRoute from './components/Protected Routes/UpdatePostRoute'
+import Profile from './Pages/Profile'
+import UpdateProfilePage from './Pages/UpdateProfilePage'
 
 
 function App() {
@@ -21,7 +23,8 @@ function App() {
     <Router>
       <Header />
       <Routes>
-        {/* <Route path="/profile" element={<Profile />} /> */}
+        <Route path="/profile/:id" element={<Profile />} />
+        <Route path="/update-profile/:id" element={<UpdateProfilePage />} />
         <Route path="/create_post" element={<UpdatePostRoute component="create"><CreatePost /></UpdatePostRoute>} />
         <Route path="/update_post/:id" element={<UpdatePostRoute component="update"><UpdatePost /></UpdatePostRoute>} />
         <Route path="/" element={<Home />} />

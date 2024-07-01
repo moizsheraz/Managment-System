@@ -1,14 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../features/auth/authSlice';
+import api from '../../api';
 
 export default function Header() {
   const { isAuthenticated } = useSelector((state) => state.auth);
+  const [users, setUsers] = useState(null);
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const loggedInUser = useSelector((state) => state.auth.userData);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await api.get('/api/get_users/');
+      const data = {};
+      response.data.forEach(user => {
+        data[user.id] = user.username;
+      });
+      setUsers(data);
+    }
+
+    fetchData()
+    }, []);
+
+    // get the loggedin user id
+    const user_id = users ? Object.keys(users).find(key => users[key] === loggedInUser) : null;
+    
   const navItems = [
     {
       name: "Home",
@@ -17,7 +36,8 @@ export default function Header() {
     },
     {
       name: "Profile",
-      route: "/profile",
+      route: "/profile/" + user_id,
+
       show: isAuthenticated
     },
     {

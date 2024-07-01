@@ -3,8 +3,7 @@ import api from "../../api";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-export default function Posts() {
-    const [posts, setPosts] = useState([]);
+export default function Posts({posts}) {
     const [users, setUsers] = useState([]);
     const [tags, setTags] = useState([]);
     const [menuVisible, setMenuVisible] = useState({});
@@ -12,15 +11,6 @@ export default function Posts() {
     const loggedInUser = useSelector((state) => state.auth.userData);
 
     useEffect(() => {
-        // fetch posts
-        api.get('/api/get_posts/')
-            .then((response) => {
-                setPosts(response.data);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-
         // fetch users
         api.get('/api/get_users/')
             .then((response) => {
@@ -75,28 +65,33 @@ export default function Posts() {
                         <div className="flex items-center mb-4">
                             <img src="https://via.placeholder.com/40" alt="User avatar" className="rounded-full h-12 w-12 mr-4" />
                             <div>
-                                <p className="text-lg font-semibold">{users[post.author]} is feeling {tags[post.tag]}</p>
+                                <p className="text-lg font-semibold">
+                                    <Link to={`/profile/${post.author}`} className="text-blue-500 hover:underline">
+                                        {users[post.author]}
+                                    </Link> is feeling {tags[post.tag]}
+                                </p>
                                 <p className="text-sm text-gray-500">{new Date(post.date_posted).toLocaleDateString()}</p>
                             </div>
-                            { loggedInUser === users[post.author] && (
+                            {loggedInUser === users[post.author] && (
                                 <div className="ml-auto relative">
-                                <button onClick={() => toggleMenu(post.id)} className="text-black text-2xl hover:text-gray-700">
-                                    &#x22EE;
-                                </button>
-                                {menuVisible[post.id] && (
-                                    <div className="absolute right-0 mt-2 w-48 bg-white border text-center rounded-lg shadow-lg z-10">
-                                        <Link to={`/update_post/${post.id}`} className="rounded-md block px-4 mb-1 py-2 text-gray-800 hover:bg-yellow-600 bg-yellow-500">
-                                            Update Post
-                                        </Link>
-                                        <button
-                                            onClick={() => handleDelete(post.id)}
-                                            className="rounded-md block w-full text-center px-4 py-2 text-gray-800 hover:bg-red-600 bg-red-500"
-                                        >
-                                            Delete Post
-                                        </button>
-                                    </div>
-                                )}
-                            </div> )}
+                                    <button onClick={() => toggleMenu(post.id)} className="text-black text-2xl hover:text-gray-700">
+                                        &#x22EE;
+                                    </button>
+                                    {menuVisible[post.id] && (
+                                        <div className="absolute right-0 mt-2 w-48 bg-white border text-center rounded-lg shadow-lg z-10">
+                                            <Link to={`/update_post/${post.id}`} className="rounded-md block px-4 mb-1 py-2 text-white hover:bg-blue-700 bg-blue-600">
+                                                Update Post
+                                            </Link>
+                                            <button
+                                                onClick={() => handleDelete(post.id)}
+                                                className="rounded-md block w-full text-center px-4 py-2 text-white hover:bg-red-700 bg-red-600"
+                                            >
+                                                Delete Post
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
                         <h2 className="text-2xl font-bold mb-2">{post.caption}</h2>
                         {post.image ? (

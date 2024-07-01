@@ -9,8 +9,10 @@ export default function UpdatePostRoute({ children, component }) {
     const loggedInUser = useSelector((state) => state.auth.userData);
     const { id } = useParams();
 
-    useEffect(() => {
-        const fetchData = async () => {
+    if (id) {
+        
+        useEffect(() => {
+            const fetchData = async () => {
             try {
                 // Fetch post
                 const postResponse = await api.get(`api/get_post/${id}/`);
@@ -27,17 +29,18 @@ export default function UpdatePostRoute({ children, component }) {
                 console.log(error);
             }
         };
-
+        
         fetchData();
     }, [id]);
-
+    
     if (!posts || !users || !loggedInUser) {
         return null; 
     }
-
-    const post_author_id = posts.author;
-    const post_author_username = users[post_author_id];
-
+    
+}
+const post_author_id = id ? posts.author : null;
+const post_author_username = id ? users[post_author_id] : null;
+    
     if (loggedInUser) {
         if (component === "create") {
             return children;
