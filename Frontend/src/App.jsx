@@ -7,6 +7,7 @@ import Register from './Pages/Register'
 import Home from './Pages/Home'
 import CreatePost from './Pages/CreatePost'
 import UpdatePost from './Pages/UpdatePost'
+import UpdatePostRoute from './components/Protected Routes/UpdatePostRoute'
 
 
 function App() {
@@ -21,8 +22,8 @@ function App() {
       <Header />
       <Routes>
         {/* <Route path="/profile" element={<Profile />} /> */}
-        <Route path="/create_post" element={<CreatePost />} />
-        <Route path="/update_post/:id" element={<UpdatePost />} />
+        <Route path="/create_post" element={<UpdatePostRoute component="create"><CreatePost /></UpdatePostRoute>} />
+        <Route path="/update_post/:id" element={<UpdatePostRoute component="update"><UpdatePost /></UpdatePostRoute>} />
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/logout" element={<Logout />} />

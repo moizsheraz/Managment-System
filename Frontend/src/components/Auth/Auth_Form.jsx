@@ -32,10 +32,10 @@ export default function Auth_Form({ method, endpoint }) {
         if (localStorage.getItem(ACCESS_TOKEN)){
           dispatch(setAuth({
             isAuthenticated: true,
-            userData: response.data
-          
-          }))}
-          console.log(response.data)
+            userData: username
+          })
+        )
+      }
         navigate("/");
       } else {
         navigate("/login");

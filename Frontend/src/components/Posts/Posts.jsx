@@ -9,8 +9,7 @@ export default function Posts() {
     const [tags, setTags] = useState([]);
     const [menuVisible, setMenuVisible] = useState({});
 
-    const loggedInUser = useSelector((state) => state.auth);
-    console.log(loggedInUser);
+    const loggedInUser = useSelector((state) => state.auth.userData);
 
     useEffect(() => {
         // fetch posts
@@ -79,7 +78,8 @@ export default function Posts() {
                                 <p className="text-lg font-semibold">{users[post.author]} is feeling {tags[post.tag]}</p>
                                 <p className="text-sm text-gray-500">{new Date(post.date_posted).toLocaleDateString()}</p>
                             </div>
-                            <div className="ml-auto relative">
+                            { loggedInUser === users[post.author] && (
+                                <div className="ml-auto relative">
                                 <button onClick={() => toggleMenu(post.id)} className="text-black text-2xl hover:text-gray-700">
                                     &#x22EE;
                                 </button>
@@ -96,7 +96,7 @@ export default function Posts() {
                                         </button>
                                     </div>
                                 )}
-                            </div>
+                            </div> )}
                         </div>
                         <h2 className="text-2xl font-bold mb-2">{post.caption}</h2>
                         {post.image ? (

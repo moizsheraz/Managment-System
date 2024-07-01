@@ -1,10 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit';
-import authSlice from '../features/auth/authSlice';
+import authSlice, {setAuth} from '../features/auth/authSlice';
 
 const store = configureStore({
     reducer : {
         auth : authSlice
     }
 });
+
+const storedAuth = JSON.parse(localStorage.getItem('auth'));
+if (storedAuth) {
+  store.dispatch(setAuth(storedAuth));
+}
 
 export default store;
