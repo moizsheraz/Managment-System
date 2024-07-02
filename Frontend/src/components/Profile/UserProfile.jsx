@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import api from "../../api";
 import { useParams, useNavigate } from "react-router-dom";
+import {useSelector} from "react-redux";
+
 
 export default function UserProfile() {
     const [user, setUser] = useState({
@@ -15,6 +17,8 @@ export default function UserProfile() {
     });
     const { id } = useParams();
     const navigate = useNavigate();
+    const loggedInUser = useSelector((state) => state.auth.userData);
+    console.log(loggedInUser)
 
     useEffect(() => {
         api.get(`/api/profile/${id}/`)
@@ -32,13 +36,13 @@ export default function UserProfile() {
     };
 
     const handleDelete = () => {
-        // api.delete(`/api/profile/${id}/`)
-        //     .then(() => {
-        //         navigate("/");
-        //     })
-        //     .catch((error) => {
-        //         console.log(error);
-        //     });
+        api.delete("api/delete_profile/")
+            .then(() => {
+                navigate("/");
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     };
 
     return (
@@ -76,6 +80,7 @@ export default function UserProfile() {
                     <p className="text-gray-600">{user.gender}</p>
                 </div>
             </div>
+            {loggedInUser === user.username && (
             <div className="mt-8 flex justify-end space-x-4">
                 <button
                     onClick={handleUpdate}
@@ -83,13 +88,13 @@ export default function UserProfile() {
                 >
                     Update Profile
                 </button>
-                <button
+                 <button
                     onClick={handleDelete}
                     className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 transition duration-300"
                 >
                     Delete Profile
                 </button>
-            </div>
+            </div>)}
         </div>
     );
 }

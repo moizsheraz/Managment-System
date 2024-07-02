@@ -27,7 +27,7 @@ export default function Post_Form() {
                     const { caption, tag, image } = response.data;
                     setCaption(caption);
                     setSelectedTag(tag);
-                    console.log(selectedTag);
+                    // console.log(selectedTag);
                     // if (image) {
                     //     console.log(image);
                     //     setImage(image);
@@ -50,7 +50,7 @@ export default function Post_Form() {
         formData.append("tag", selectedTag);
 
         if (image) {
-            console.log(image);
+            // console.log(image);
             formData.append("image", image);
         }
         try {

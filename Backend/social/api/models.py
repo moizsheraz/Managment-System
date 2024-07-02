@@ -16,7 +16,7 @@ class User(AbstractUser):
     phone_number = models.CharField(max_length= 200, blank=True)
     address = models.CharField(max_length=100, blank=True)
     gender = models.CharField(choices=GENDER_CHOICES, max_length=1, blank=True)
-    profile_pic = models.ImageField(upload_to='profile_pics', blank=True, default='avatar.svg')
+    profile_pic = models.ImageField(upload_to='profile_pics', blank=True, null=True)
 
     def __str__(self):
         return self.username

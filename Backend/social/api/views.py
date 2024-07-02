@@ -143,6 +143,7 @@ def delete_post(request, pk):
 
 # api view for getting user profile
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def get_profile(request, pk):
     if request.method == 'GET':
         try:
@@ -159,15 +160,20 @@ def get_profile(request, pk):
 # api view for updating user profile
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
-@parser_classes([MultiPartParser, FormParser, FileUploadParser])
+@parser_classes([MultiPartParser, FormParser])
 def update_profile(request):
     if request.method == 'PUT':
         try:
             profile = User.objects.get(id=request.user.id)
-            serializer = ProfileSerializer(profile, data=request.data, partial=True)
+            data = request.data.copy()
+            if 'profile_pic' not in data or not data['profile_pic']:
+                data.pop('profile_pic', None)
+            
+            serializer = ProfileSerializer(profile, data=data, partial=True, context={'request': request})
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
+            print(serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

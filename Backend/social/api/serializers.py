@@ -28,6 +28,7 @@ class PostSerializer(serializers.ModelSerializer):
     
 
 class ProfileSerializer(serializers.ModelSerializer):
+    profile_pic = serializers.ImageField(required=False, allow_null=True, allow_empty_file=True)
     class Meta:
         model = User
         fields = ['username', 'email', 'name', 'bio', 'phone_number', 'address', 'gender', 'profile_pic']
