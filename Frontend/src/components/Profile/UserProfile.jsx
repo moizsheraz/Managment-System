@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import api from "../../api";
 import { useParams, useNavigate } from "react-router-dom";
-import {useSelector} from "react-redux";
+import {useSelector, useDispatch} from "react-redux";
+import { logout } from "../../features/auth/authSlice";
 
 
 export default function UserProfile() {
@@ -18,7 +19,8 @@ export default function UserProfile() {
     const { id } = useParams();
     const navigate = useNavigate();
     const loggedInUser = useSelector((state) => state.auth.userData);
-    console.log(loggedInUser)
+    const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         api.get(`/api/profile/${id}/`)
@@ -29,7 +31,7 @@ export default function UserProfile() {
             .catch((error) => {
                 console.log(error);
             });
-    }, [id]);
+    }, [id, loggedInUser, isAuthenticated]);
 
     const handleUpdate = () => {
         navigate(`/update-profile/${id}`);
@@ -38,7 +40,8 @@ export default function UserProfile() {
     const handleDelete = () => {
         api.delete("api/delete_profile/")
             .then(() => {
-                navigate("/");
+                dispatch(logout());
+                navigate("/login");
             })
             .catch((error) => {
                 console.log(error);

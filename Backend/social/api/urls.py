@@ -27,4 +27,10 @@ urlpatterns = [
     path('delete_profile/', views.delete_profile, name='delete_profile'),
 
     path('search/', views.search, name='search'),
+
+    path('like/<int:post_id>/', views.like_post, name='like-post'),
+    path('unlike/<int:post_id>/', views.unlike_post, name='unlike-post'),
+    path('liked_posts/', views.get_liked_posts, name='get-liked-posts'),
+
+
 ]

@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes, parser_classes
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
 # from django.contrib.auth.models import User
@@ -29,12 +30,14 @@ def Endpoints(request):
 
 # api view for registering a user   
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def register_user(request):
     if request.method == 'POST':
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response({'message': 'User Created'}, status=status.HTTP_201_CREATED)
+        print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -231,3 +234,36 @@ def get_users(request):
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     return Response({'error': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# api for like 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def like_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    user = request.user
+
+    if user in post.likes.all():
+        return Response({'status': 'Already Liked'}, status=200)
+    else:
+        post.likes.add(user)
+        return Response({'status': 'Liked Successfully'}, status=201)
+    
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def unlike_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    user = request.user
+
+    if user in post.likes.all():
+        post.likes.remove(user)
+        return Response({'status': 'unliked'}, status=204)
+    else:
+        return Response({'status': 'not liked'}, status=404)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_liked_posts(request):
+    user = request.user
+    liked_posts = Post.objects.filter(likes=user).values_list('id', flat=True)
+    return Response({'liked_posts': list(liked_posts)}, status=200)

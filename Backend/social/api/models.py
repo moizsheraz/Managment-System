@@ -27,6 +27,7 @@ class Post(models.Model):
     caption = models.TextField(blank=True)  # e.g: any motivational quote
     tag = models.ForeignKey('Tag', max_length=100, on_delete=models.SET_NULL, null=True)         # e.g: happy, excited, sad
     image = models.ImageField(upload_to='post_pics', blank=True, null=True)
+    likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
     date_posted = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
     
@@ -35,6 +36,14 @@ class Post(models.Model):
     
     class Meta:
         ordering = ['-date_updated','-date_posted']
+
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.user.username} likes {self.post.author.username}'s post"
 
 
 class Tag(models.Model):

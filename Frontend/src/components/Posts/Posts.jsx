@@ -3,15 +3,17 @@ import api from "../../api";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-export default function Posts({posts}) {
-    const [users, setUsers] = useState([]);
-    const [tags, setTags] = useState([]);
+export default function Posts({ posts }) {
+    const [users, setUsers] = useState({});
+    const [tags, setTags] = useState({});
     const [menuVisible, setMenuVisible] = useState({});
-
+    const [likedPosts, setLikedPosts] = useState([]);
+    const [showLikesModal, setShowLikesModal] = useState(false);
+    const [selectedPostLikes, setSelectedPostLikes] = useState([]);
     const loggedInUser = useSelector((state) => state.auth.userData);
 
     useEffect(() => {
-        // fetch users
+        // Fetch users
         api.get('/api/get_users/')
             .then((response) => {
                 const userData = {};
@@ -24,7 +26,7 @@ export default function Posts({posts}) {
                 console.log(error);
             });
 
-        // fetch tags
+        // Fetch tags
         api.get("/api/get_tags/")
             .then((response) => {
                 const tagsData = {};
@@ -32,6 +34,15 @@ export default function Posts({posts}) {
                     tagsData[post_tag.id] = post_tag.tag;
                 });
                 setTags(tagsData);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
+        // Fetch liked posts
+        api.get("/api/liked_posts/")
+            .then((response) => {
+                setLikedPosts(response.data.liked_posts);
             })
             .catch((error) => {
                 console.log(error);
@@ -54,6 +65,34 @@ export default function Posts({posts}) {
             ...prevState,
             [id]: !prevState[id]
         }));
+    };
+
+    const handleLike = async (postId) => {
+        try {
+            await api.post(`/api/like/${postId}/`);
+            setLikedPosts([...likedPosts, postId]);
+        } catch (error) {
+            console.error("There was an error liking the post!", error);
+        }
+    };
+
+    const handleUnlike = async (postId) => {
+        try {
+            await api.delete(`/api/unlike/${postId}/`);
+            setLikedPosts(likedPosts.filter(id => id !== postId));
+        } catch (error) {
+            console.error("There was an error unliking the post!", error);
+        }
+    };
+
+    const handleShowLikes = (likes) => {
+        setSelectedPostLikes(likes);
+        setShowLikesModal(true);
+    };
+
+    const handleCloseLikes = () => {
+        setShowLikesModal(false);
+        setSelectedPostLikes([]);
     };
 
     return (
@@ -97,17 +136,62 @@ export default function Posts({posts}) {
                         {post.image ? (
                             <img src={`http://127.0.0.1:8000${post.image}`} alt={post.caption} className="rounded-lg mb-4 w-full object-cover h-96" />
                         ) : null}
-                        <div className="mt-4 flex justify-end">
-                            <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-200">
-                                Like
-                            </button>
-                            <button className="ml-2 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition duration-200">
-                                Comment
+                        {loggedInUser && (
+                            <div className="mt-4 flex justify-end">
+                                {likedPosts.includes(post.id) ? (
+                                    <button
+                                        onClick={() => handleUnlike(post.id)}
+                                        className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-200"
+                                    >
+                                        Unlike
+                                    </button>
+                                ) : (
+                                    <button
+                                        onClick={() => handleLike(post.id)}
+                                        className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-200"
+                                    >
+                                        Like
+                                    </button>
+                                )}
+                                <button className="ml-2 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition duration-200">
+                                    Comment
+                                </button>
+                            </div>
+                        )}
+                        <div className="mt-4">
+                            <button 
+                                onClick={() => handleShowLikes(post.likes)} 
+                                className="text-blue-500 hover:underline"
+                            >
+                                {post.likes.length} Likes
                             </button>
                         </div>
                     </div>
                 ))}
             </div>
+
+            {showLikesModal && (
+                <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                    <div className="bg-white rounded-lg shadow-lg p-6 w-96">
+                        <h2 className="text-xl font-bold mb-4">Likes</h2>
+                        <ul className="space-y-2">
+                            {selectedPostLikes.map(userId => (
+                                <li key={userId}>
+                                    <Link to={`/profile/${userId}`} className="text-blue-500 hover:underline">
+                                        {users[userId]}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                        <button 
+                            onClick={handleCloseLikes} 
+                            className="mt-4 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition duration-200"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
