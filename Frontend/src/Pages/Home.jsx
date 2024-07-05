@@ -12,7 +12,7 @@ export default function Home() {
             console.log(error);
         });
     }, [])
-    console.log(posts)
+    // console.log(posts)
     return (
         <>
         <Posts posts={posts}/>

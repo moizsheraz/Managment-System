@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import api from "../../api";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import Comment from "./Comment";
 
 export default function Posts({ posts }) {
     const [users, setUsers] = useState({});
@@ -11,6 +12,19 @@ export default function Posts({ posts }) {
     const [showLikesModal, setShowLikesModal] = useState(false);
     const [selectedPostLikes, setSelectedPostLikes] = useState([]);
     const loggedInUser = useSelector((state) => state.auth.userData);
+
+    // Fetch liked posts
+    const get_likes = async () => {
+        api.get("/api/liked_posts/")
+        .then((response) => {
+            setLikedPosts(response.data.liked_posts);
+            // console.log(response.data)
+        })
+
+        .catch((error) => {
+            console.log(error);
+        });
+    };
 
     useEffect(() => {
         // Fetch users
@@ -40,15 +54,8 @@ export default function Posts({ posts }) {
             });
 
         // Fetch liked posts
-        api.get("/api/liked_posts/")
-            .then((response) => {
-                setLikedPosts(response.data.liked_posts);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-
-    }, []);
+        get_likes();
+    }, [posts]);
 
     const handleDelete = async (id) => {
         try {
@@ -70,7 +77,7 @@ export default function Posts({ posts }) {
     const handleLike = async (postId) => {
         try {
             await api.post(`/api/like/${postId}/`);
-            setLikedPosts([...likedPosts, postId]);
+            get_likes();
         } catch (error) {
             console.error("There was an error liking the post!", error);
         }
@@ -79,7 +86,7 @@ export default function Posts({ posts }) {
     const handleUnlike = async (postId) => {
         try {
             await api.delete(`/api/unlike/${postId}/`);
-            setLikedPosts(likedPosts.filter(id => id !== postId));
+            get_likes();
         } catch (error) {
             console.error("There was an error unliking the post!", error);
         }
@@ -153,9 +160,6 @@ export default function Posts({ posts }) {
                                         Like
                                     </button>
                                 )}
-                                <button className="ml-2 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition duration-200">
-                                    Comment
-                                </button>
                             </div>
                         )}
                         <div className="mt-4">
@@ -166,6 +170,7 @@ export default function Posts({ posts }) {
                                 {post.likes.length} Likes
                             </button>
                         </div>
+                        <Comment postId={post.id} />
                     </div>
                 ))}
             </div>
