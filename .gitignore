@@ -24,3 +24,6 @@ ENV/
 __pycache__/
 *.py[cod]
 *$py.class
+
+#migrations 
+migrations/

@@ -6,6 +6,7 @@ import Comment from "./Comment";
 
 export default function Posts({ posts }) {
     const [users, setUsers] = useState({});
+    const [userPic, setUserPic] = useState({});
     const [tags, setTags] = useState({});
     const [menuVisible, setMenuVisible] = useState({});
     const [likedPosts, setLikedPosts] = useState([]);
@@ -16,14 +17,14 @@ export default function Posts({ posts }) {
     // Fetch liked posts
     const get_likes = async () => {
         api.get("/api/liked_posts/")
-        .then((response) => {
-            setLikedPosts(response.data.liked_posts);
-            // console.log(response.data)
-        })
+            .then((response) => {
+                setLikedPosts(response.data.liked_posts);
+                // console.log(response.data)
+            })
 
-        .catch((error) => {
-            console.log(error);
-        });
+            .catch((error) => {
+                console.log(error);
+            });
     };
 
     useEffect(() => {
@@ -31,10 +32,14 @@ export default function Posts({ posts }) {
         api.get('/api/get_users/')
             .then((response) => {
                 const userData = {};
+                const userPics = {};
+                // console.log(response.data)
                 response.data.forEach(user => {
                     userData[user.id] = user.username;
+                    userPics[user.id] = user.profile_pic
                 });
                 setUsers(userData);
+                setUserPic(userPics);
             })
             .catch((error) => {
                 console.log(error);
@@ -102,6 +107,8 @@ export default function Posts({ posts }) {
         setSelectedPostLikes([]);
     };
 
+    // console.log(users)
+
     return (
         <div className="container mx-auto p-4">
             <h1 className="text-3xl font-bold mb-6 text-center">Posts</h1>
@@ -109,7 +116,11 @@ export default function Posts({ posts }) {
                 {posts.map(post => (
                     <div key={post.id} className="bg-white rounded-lg shadow-lg p-6 max-w-xl mx-auto relative">
                         <div className="flex items-center mb-4">
-                            <img src="https://via.placeholder.com/40" alt="User avatar" className="rounded-full h-12 w-12 mr-4" />
+                            <img
+                                src={`http://127.0.0.1:8000${userPic[post.author]}`}
+                                alt="User avatar"
+                                className="rounded-full h-12 w-12 mr-4"
+                            /> 
                             <div>
                                 <p className="text-lg font-semibold">
                                     <Link to={`/profile/${post.author}`} className="text-blue-500 hover:underline">
@@ -163,8 +174,8 @@ export default function Posts({ posts }) {
                             </div>
                         )}
                         <div className="mt-4">
-                            <button 
-                                onClick={() => handleShowLikes(post.likes)} 
+                            <button
+                                onClick={() => handleShowLikes(post.likes)}
                                 className="text-blue-500 hover:underline"
                             >
                                 {post.likes.length} Likes
@@ -188,8 +199,8 @@ export default function Posts({ posts }) {
                                 </li>
                             ))}
                         </ul>
-                        <button 
-                            onClick={handleCloseLikes} 
+                        <button
+                            onClick={handleCloseLikes}
                             className="mt-4 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition duration-200"
                         >
                             Close

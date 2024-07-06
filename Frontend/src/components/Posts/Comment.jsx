@@ -15,7 +15,7 @@ export default function Comment({ postId }) {
             api.get(`/comment/post/${postId}/`)
                 .then((response) => {
                     setComments(response.data);
-                    console.log(response.data)
+                    // console.log(response.data)
                 })
                 .catch((error) => {
                     console.log(error);

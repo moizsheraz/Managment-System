@@ -4,7 +4,7 @@ from .models import *
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id','username', 'password']
+        fields = ['id','username', 'password', 'profile_pic']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -20,10 +20,12 @@ class PostSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['author'] = self.context['request'].user
         image = self.context['request'].FILES.get('image')
+        likes_data = validated_data.pop('likes', [])
         if image:
             post = Post.objects.create(**validated_data)
         else:
             post = Post.objects.create(**validated_data)
+        post.likes.set(likes_data)
         return post
     
 
