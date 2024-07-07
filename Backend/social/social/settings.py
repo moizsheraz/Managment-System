@@ -3,6 +3,7 @@ pymysql.install_as_MySQLdb()
 
 from pathlib import Path
 from datetime import timedelta
+from decouple import config
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -95,29 +96,13 @@ ASGI_APPLICATION = 'social.asgi.application'
 DATABASES = {
     'default': {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "social",
-        "USER": "ZainAli121",
-        "PASSWORD": "12345678",
+        "NAME": config('NAME'),
+        "USER": config('USER'),
+        "PASSWORD": config('PASSWORD'),
         "HOST": "127.0.0.1",
         "PORT": "3306"
     }   
 }
-
-# DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.mysql',
-#        'NAME': 'railway',
-#        'USER': 'root',
-#        'PASSWORD': 'sgvkbvLDSFPFymWWxbUrqATJueXzcoNc',
-#        'HOST': 'viaduct.proxy.rlwy.net',
-#        'PORT': '44071',
-#        'OPTIONS': {
-#             'charset': 'utf8mb4',
-#             'sql_mode': 'traditional',
-#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
-#         }
-#    }
-# }
 
 
 # Password validation
@@ -143,7 +128,7 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
+        "rest_framework.permissions.AllowAny",
     ],
 }
 
@@ -151,14 +136,14 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'zainali121146@gmail.com'
-EMAIL_HOST_PASSWORD = 'mmge bcyf ukfc pdql'
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en-us' 
 
 TIME_ZONE = 'UTC'
 

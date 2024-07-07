@@ -26,8 +26,7 @@ __pycache__/
 *$py.class
 
 #migrations 
-migrations/
+migrations/ 
 Backend/social/api/migrations/
 
-# seetings file
-Backend/social/social/settings.py
+.env
