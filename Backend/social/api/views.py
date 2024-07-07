@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes, parser_classes
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, generics
 # from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -267,3 +267,25 @@ def get_liked_posts(request):
     user = request.user
     liked_posts = Post.objects.filter(likes=user).values_list('id', flat=True)
     return Response({'liked_posts': list(liked_posts)}, status=200)
+
+class PasswordResetView(generics.GenericAPIView):
+    serializer_class = PasswordResetSerializer
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(request=request)
+            return Response({'message': 'Password reset link has been sent to your email'}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PasswordResetConfirmView(generics.GenericAPIView):
+    serializer_class = PasswordResetConfirmSerializer
+    permission_classes = [AllowAny]
+
+    def post(self, request, uidb64, token, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data, context={'uid': uidb64, 'token': token})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({'message': 'Password has been reset successfully'}, status=status.HTTP_200_OK)

@@ -10,6 +10,7 @@ import UpdatePost from './Pages/UpdatePost'
 import UpdatePostRoute from './components/Protected Routes/UpdatePostRoute'
 import Profile from './Pages/Profile'
 import UpdateProfilePage from './Pages/UpdateProfilePage'
+import ForgotPasswordPage from './Pages/ForgotPasswordPage'
 
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       </Routes>
     </Router>
   )

@@ -3,7 +3,7 @@ import api from "../../api";
 import { useNavigate, Link } from "react-router-dom";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../varibales";
 import { useDispatch } from "react-redux";
-import { login, setAuth } from "../../features/auth/authSlice";
+import { setAuth } from "../../features/auth/authSlice";
 
 export default function Auth_Form({ method, endpoint }) {
   const [username, setUsername] = useState("");
@@ -15,7 +15,6 @@ export default function Auth_Form({ method, endpoint }) {
   const welcomeMessage = method === "signup" ? "Welcome! Please create an account." : "Welcome back! Please login.";
   const switchLink = method === "signup" ? "/login" : "/register";
   const switchLinkText = method === "signup" ? "Already have an account? Login" : "Don't have an account? Register";
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,19 +32,15 @@ export default function Auth_Form({ method, endpoint }) {
           dispatch(setAuth({
             isAuthenticated: true,
             userData: username
-          })
-        )
-      }
+          }))
+        }
         navigate("/");
       } else {
         navigate("/login");
       }
-
-
     } catch (error) {
       console.log(error);
-    }
-    finally {
+    } finally {
       console.log(`Request Made to ${method}`)
     }
   }
@@ -97,6 +92,13 @@ export default function Auth_Form({ method, endpoint }) {
           <Link to={switchLink} className="text-blue-500 hover:underline">
             {switchLinkText}
           </Link>
+          {method === "login" && (
+            <div className="mt-4">
+              <Link to="/forgot-password" className="text-blue-500 hover:underline">
+                Forgot Password?
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>
