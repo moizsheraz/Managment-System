@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import PasswordResetView, PasswordResetConfirmView
+from .views import PasswordResetView, PasswordResetConfirmView, FollowUser, FollowersList
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
@@ -36,5 +36,7 @@ urlpatterns = [
     path('unlike/<int:post_id>/', views.unlike_post, name='unlike-post'),
     path('liked_posts/', views.get_liked_posts, name='get-liked-posts'),
 
-
+    path('follow/', FollowUser.as_view(), name='follow_user'),
+    path('unfollow/', FollowUser.as_view(), name='unfollow_user'),
+    path('followers/<int:user_id>/', FollowersList.as_view(), name='followers_list'),
 ]

@@ -9,14 +9,22 @@ from django.urls import reverse
 from django.utils.encoding import force_bytes
 
 class UserSerializer(serializers.ModelSerializer):
+    followers = serializers.SerializerMethodField()
+    following = serializers.SerializerMethodField()
     class Meta:
         model = User
-        fields = ['id','username', 'password', 'profile_pic']
+        fields = ['id','username', 'password', 'profile_pic', 'followers', 'following']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
+
+    def get_followers(self, obj):
+        return obj.followers.count()
+
+    def get_following(self, obj):
+        return obj.following.count()
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -48,10 +56,7 @@ class TagSerializer(serializers.ModelSerializer):
         model = Tag
         fields = '__all__'
 
-class LikeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Like
-        fields = '__all__'
+
 
 
 class PasswordResetSerializer(serializers.Serializer):
@@ -105,3 +110,8 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         user = User.objects.get(pk=user_pk)
         user.set_password(self.validated_data['new_password'])
         user.save()
+
+class FollowSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Follow
+        fields = ['id', 'follower', 'following', 'created_at']

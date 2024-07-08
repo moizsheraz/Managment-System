@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from rest_framework import status, generics
 # from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+
+from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authtoken.models import Token
 from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
@@ -289,3 +291,32 @@ class PasswordResetConfirmView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({'message': 'Password has been reset successfully'}, status=status.HTTP_200_OK)
+
+
+class FollowUser(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        following_id = request.data.get('following_id')
+        following_user = User.objects.get(id=following_id)
+        follow, created = Follow.objects.get_or_create(follower=request.user, following=following_user)
+        if created:
+            return Response(status=status.HTTP_201_CREATED)
+        else:
+            return Response(status=status.HTTP_200_OK)
+
+    def delete(self, request, *args, **kwargs):
+        following_id = request.data.get('following_id')
+        following_user = User.objects.get(id=following_id)
+        Follow.objects.filter(follower=request.user, following=following_user).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class FollowersList(generics.ListAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        user = User.objects.get(id=user_id)
+        return user.followers.all()

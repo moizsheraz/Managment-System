@@ -37,17 +37,21 @@ class Post(models.Model):
     class Meta:
         ordering = ['-date_updated','-date_posted']
 
-class Like(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    
-    def __str__(self):
-        return f"{self.user.username} likes {self.post.author.username}'s post"
-
 
 class Tag(models.Model):
     tag = models.CharField(max_length=100)
 
     def __str__(self):
         return self.tag
+    
+
+class Follow(models.Model):
+    follower = models.ForeignKey(User, related_name="following", on_delete=models.CASCADE)
+    following = models.ForeignKey(User, related_name="followers", on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('follower', 'following')
+
+    def __str__(self):
+        return f"{self.follower} follows {self.following}"
