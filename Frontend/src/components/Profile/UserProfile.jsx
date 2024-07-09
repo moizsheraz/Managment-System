@@ -3,6 +3,7 @@ import api from "../../api";
 import { useParams, useNavigate } from "react-router-dom";
 import {useSelector, useDispatch} from "react-redux";
 import { logout } from "../../features/auth/authSlice";
+import FollowUnFollow from "../FollowUnfollowBtn/FollowUnFollow";
 
 
 export default function UserProfile() {
@@ -25,7 +26,6 @@ export default function UserProfile() {
     useEffect(() => {
         api.get(`/api/profile/${id}/`)
             .then((response) => {
-                // console.log(response.data);
                 setUser(response.data);
             })
             .catch((error) => {
@@ -83,21 +83,27 @@ export default function UserProfile() {
                     <p className="text-gray-600">{user.gender}</p>
                 </div>
             </div>
-            {loggedInUser === user.username && (
-            <div className="mt-8 flex justify-end space-x-4">
-                <button
-                    onClick={handleUpdate}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition duration-300"
-                >
-                    Update Profile
-                </button>
-                 <button
-                    onClick={handleDelete}
-                    className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 transition duration-300"
-                >
-                    Delete Profile
-                </button>
-            </div>)}
+            {loggedInUser === user.username ? (
+                <div className="mt-8 flex justify-end space-x-4">
+                    <button
+                        onClick={handleUpdate}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition duration-300"
+                    >
+                        Update Profile
+                    </button>
+                    <button
+                        onClick={handleDelete}
+                        className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 transition duration-300"
+                    >
+                        Delete Profile
+                    </button>
+                </div>
+            ) : (
+                <div className="mt-8 flex justify-end">
+                    <FollowUnFollow userId={id} />
+                </div>
+            )}
         </div>
     );
+
 }

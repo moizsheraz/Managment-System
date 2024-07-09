@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Header from './components/Header/Header'
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { ACCESS_TOKEN } from './varibales'
 
 import Login from './Pages/Login'
 import Register from './Pages/Register'
@@ -11,6 +13,7 @@ import UpdatePostRoute from './components/Protected Routes/UpdatePostRoute'
 import Profile from './Pages/Profile'
 import UpdateProfilePage from './Pages/UpdateProfilePage'
 import ForgotPasswordPage from './Pages/ForgotPasswordPage'
+import FollowUnFollowPage from './Pages/FollowUnFollowPage'
 
 
 function App() {
@@ -33,6 +36,7 @@ function App() {
         <Route path="/logout" element={<Logout />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/follow" element={<FollowUnFollowPage/>} />
       </Routes>
     </Router>
   )

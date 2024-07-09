@@ -21,10 +21,10 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
     def get_followers(self, obj):
-        return obj.followers.count()
+        return obj.followers.values_list('id', flat=True)
 
     def get_following(self, obj):
-        return obj.following.count()
+        return obj.following.values_list('id', flat=True)
 
 
 class PostSerializer(serializers.ModelSerializer):

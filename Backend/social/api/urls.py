@@ -12,6 +12,7 @@ urlpatterns = [
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
 
     path('get_users/', views.get_users, name='get_user'),
+    path('get_user/<int:pk>/', views.get_user, name='get_user'),
 
     path('password-reset/', PasswordResetView.as_view(), name='password-reset'),
     path('password-reset-confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password-reset-confirm'),

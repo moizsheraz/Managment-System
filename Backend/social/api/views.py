@@ -279,6 +279,7 @@ class PasswordResetView(generics.GenericAPIView):
         if serializer.is_valid():
             serializer.save(request=request)
             return Response({'message': 'Password reset link has been sent to your email'}, status=status.HTTP_200_OK)
+        print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -313,10 +314,23 @@ class FollowUser(APIView):
 
 
 class FollowersList(generics.ListAPIView):
-    serializer_class = UserSerializer
+    serializer_class = FollowSerializer
     permission_classes = [AllowAny]
 
     def get_queryset(self):
         user_id = self.kwargs['user_id']
         user = User.objects.get(id=user_id)
+        print(user.followers.all())
         return user.followers.all()
+    
+# api view for getting one user
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_user(request, pk):
+    if request.method == 'GET':
+        try:
+            user = User.objects.get(id=pk)
+            serializer = UserSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
