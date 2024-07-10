@@ -14,6 +14,7 @@ import Profile from './Pages/Profile'
 import UpdateProfilePage from './Pages/UpdateProfilePage'
 import ForgotPasswordPage from './Pages/ForgotPasswordPage'
 import FollowUnFollowPage from './Pages/FollowUnFollowPage'
+import UserPage from './Pages/UserPage'
 
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/follow" element={<FollowUnFollowPage/>} />
+        <Route path="/users" element={<UserPage/>} />
       </Routes>
     </Router>
   )

@@ -23,10 +23,11 @@ urlpatterns = [
     path('update_post/<int:pk>/', views.update_post, name='update_post'),
     path('get_post/<int:pk>/', views.get_post, name='get_post'),
     path('delete_post/<int:pk>/', views.delete_post, name='delete_post'),
+    path('get_followed_posts/', views.get_followed_posts, name='get_followed_posts'),
 
     path('get_tags/', views.get_tags, name='get_tags'),
 
-
+    path('get_profiles/', views.get_profiles, name='get_profiles'),
     path('profile/<int:pk>/', views.get_profile, name='profile'),
     path('update_profile/', views.update_profile, name='update_profile'),
     path('delete_profile/', views.delete_profile, name='delete_profile'),

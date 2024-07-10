@@ -114,8 +114,9 @@ export default function UserProfile() {
                     </button>
                 </div>
             ) : (
+
                 <div className="mt-8 flex justify-end space-x-4">
-                    <FollowUnFollow userId={id} />
+                    {loggedInUser ? <FollowUnFollow userId={id}  /> : null}
                     <button
                         onClick={handleShowFollowers}
                         className="px-4 py-2 bg-gray-600 text-white rounded-lg shadow hover:bg-gray-700 transition duration-300"

@@ -37,15 +37,21 @@ export default function Header() {
       show: true
     },
     {
-      name: "Profile",
-      route: `/profile/${user_id}`,
+      name: "Users",
+      route: '/users',
       icon: <FaUser />,
-      show: isAuthenticated
+      show: true
     },
     {
       name: "Create Post",
       route: "/create_post",
       icon: <FaPen />,
+      show: isAuthenticated
+    },
+    {
+      name: "Profile",
+      route: `/profile/${user_id}`,
+      icon: <FaUser />,
       show: isAuthenticated
     },
     {

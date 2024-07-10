@@ -334,3 +334,27 @@ def get_user(request, pk):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+# get all profiles
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_profiles(request):
+    if request.method == 'GET':
+        profiles = User.objects.all()
+        serializer = ProfileSerializer(profiles, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response({'error': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)
+
+# api view for getting posts of that user who is followed by the current user
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_followed_posts(request):
+    if request.method == 'GET':
+        following = request.user.following.all()
+        following_users = [follow.following for follow in following]
+        following_users.append(request.user)
+        posts = Post.objects.filter(author__in=following_users)
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response({'error': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)
