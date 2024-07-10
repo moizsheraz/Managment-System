@@ -4,30 +4,32 @@ import { useSelector } from "react-redux";
 
 export default function FollowUnFollow({ userId }) {
     const [isFollowing, setIsFollowing] = useState(false);
+    const [logeedInuserId, setLogeedInuserId] = useState(null)
     const loggedInUser = useSelector((state) => state.auth.userData);
-    let logeedInuserId;
+
 
     useEffect(() => {
-        api.get('api/get_users/')
-        .then((response) => {
-            console.log(response.data)
+        if (loggedInUser) {            
+            api.get('api/get_users/')
+            .then((response) => {
             response.data.forEach(element => {
                 if (element.username === loggedInUser) {
-                    logeedInuserId = element.id
-                    console.log(logeedInuserId)
+                    setLogeedInuserId(element.id)
                 }
             });
         })
         .catch((error) => {
             console.log(error)
         })
+    }
+    }, [loggedInUser])
 
-        
-        // get follwoers of user 
+    useEffect(() => {
+        if (logeedInuserId) {
+            // get follwoers of user 
         api.get(`api/followers/${userId}/`)
         .then((response) => {
             const data = response.data;
-            console.log(data)
             data.forEach(element => {
                 if (element.follower === logeedInuserId) {
                     setIsFollowing(true)
@@ -37,8 +39,10 @@ export default function FollowUnFollow({ userId }) {
         .catch((error) => {
             console.log(error)
         })
-    }, [userId, loggedInUser])
-    console.log(logeedInuserId)
+        }
+    }, [userId, logeedInuserId])
+
+
     const handleFollow = () => {
         api.post('api/follow/', {following_id: userId})
         .then(() => {

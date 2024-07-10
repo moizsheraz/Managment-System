@@ -3,8 +3,8 @@ import api from "../../api";
 import { useParams, useNavigate } from "react-router-dom";
 import {useSelector, useDispatch} from "react-redux";
 import { logout } from "../../features/auth/authSlice";
-import FollowUnFollow from "../FollowUnfollowBtn/FollowUnFollow";
-
+import FollowUnFollow from "../Followers/FollowUnFollow";
+import GetFollowers from "../Followers/GetFollowers";
 
 export default function UserProfile() {
     const [user, setUser] = useState({
@@ -17,6 +17,7 @@ export default function UserProfile() {
         gender: "",
         profile_pic: ""
     });
+    const [showFollowersPopup, setShowFollowersPopup] = useState(false);
     const { id } = useParams();
     const navigate = useNavigate();
     const loggedInUser = useSelector((state) => state.auth.userData);
@@ -46,6 +47,14 @@ export default function UserProfile() {
             .catch((error) => {
                 console.log(error);
             });
+    };
+
+    const handleShowFollowers = () => {
+        setShowFollowersPopup(true);
+    };
+
+    const handleCloseFollowersPopup = () => {
+        setShowFollowersPopup(false);
     };
 
     return (
@@ -86,6 +95,12 @@ export default function UserProfile() {
             {loggedInUser === user.username ? (
                 <div className="mt-8 flex justify-end space-x-4">
                     <button
+                        onClick={handleShowFollowers}
+                        className="px-4 py-2 bg-gray-600 text-white rounded-lg shadow hover:bg-gray-700 transition duration-300"
+                    >
+                        Show Followers
+                    </button>
+                    <button
                         onClick={handleUpdate}
                         className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition duration-300"
                     >
@@ -99,10 +114,17 @@ export default function UserProfile() {
                     </button>
                 </div>
             ) : (
-                <div className="mt-8 flex justify-end">
+                <div className="mt-8 flex justify-end space-x-4">
                     <FollowUnFollow userId={id} />
+                    <button
+                        onClick={handleShowFollowers}
+                        className="px-4 py-2 bg-gray-600 text-white rounded-lg shadow hover:bg-gray-700 transition duration-300"
+                    >
+                        Show Followers
+                    </button>
                 </div>
             )}
+            {showFollowersPopup && <GetFollowers userId={id} onClose={handleCloseFollowersPopup} />}
         </div>
     );
 
