@@ -64,6 +64,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'social.urls'
@@ -93,17 +94,30 @@ ASGI_APPLICATION = 'social.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": config('NAME'),
-        "USER": config('USER'),
-        "PASSWORD": config('PASSWORD'),
-        "HOST": "127.0.0.1",
-        "PORT": "3306"
-    }   
-}
+# DATABASES = {
+#     'default': {
+#         "ENGINE": "django.db.backends.mysql",
+#         "NAME": config('NAME'),
+#         "USER": config('USER'),
+#         "PASSWORD": config('PASSWORD'),
+#         "HOST": "127.0.0.1",
+#         "PORT": "3306"
+#     }   
+# }
 
+DATABASES = {
+  'default': {
+    'ENGINE': 'django.db.backends.postgresql',
+    'NAME': config('PGDATABASE'),
+    'USER': config('PGUSER'),
+    'PASSWORD': config('PGPASSWORD'),
+    'HOST': config('PGHOST'),
+    'PORT': config('PGPORT', 5432),
+    'OPTIONS': {
+      'sslmode': 'require',
+    },
+  }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -165,6 +179,8 @@ STATICFILES_DIRS = [
 
 MEDIA_ROOT = BASE_DIR / 'static/images'
 MEDIA_URL = '/images/'
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
