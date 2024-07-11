@@ -1,19 +1,27 @@
 {
     "builds": [
       {
-        "src": "build.sh",
-        "use": "@vercel/static-build",
-        "config": { "distDir": "staticfiles" }
-      },
-      {
         "src": "manage.py",
         "use": "@vercel/python",
-        "config": { "maxLambdaSize": "50mb" }
+        "config": {
+          "maxLambdaSize": "50mb"
+        },
+        "buildCommand": "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate"
+      },
+      {
+        "src": "staticfiles/**",
+        "use": "@vercel/static"
       }
     ],
     "routes": [
-      { "src": "/static/(.*)", "dest": "/staticfiles/$1" },
-      { "src": "/(.*)", "dest": "manage.py" }
+      {
+        "src": "/static/(.*)",
+        "dest": "/staticfiles/$1"
+      },
+      {
+        "src": "/(.*)",
+        "dest": "manage.py"
+      }
     ]
   }
   
