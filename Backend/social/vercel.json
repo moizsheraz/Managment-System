@@ -1,10 +1,12 @@
 {
     "builds": [
       {
-        "src": "manage.py",
+        "src": "social/wsgi.py",
         "use": "@vercel/python",
         "config": {
-          "maxLambdaSize": "50mb"
+          "maxLambdaSize": "50mb",
+            "runtime": "python3.9"
+
         },
         "buildCommand": "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate"
       },
@@ -20,7 +22,7 @@
       },
       {
         "src": "/(.*)",
-        "dest": "manage.py"
+        "dest": "social/wsgi.py"
       }
     ]
   }
