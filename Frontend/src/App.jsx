@@ -15,6 +15,7 @@ import UpdateProfilePage from './Pages/UpdateProfilePage'
 import ForgotPasswordPage from './Pages/ForgotPasswordPage'
 import FollowUnFollowPage from './Pages/FollowUnFollowPage'
 import UserPage from './Pages/UserPage'
+import NotFound from './components/Protected Routes/NotFound'
 
 
 function App() {
@@ -39,6 +40,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/follow" element={<FollowUnFollowPage/>} />
         <Route path="/users" element={<UserPage/>} />
+        <Route path="*" element={<NotFound/>} />
       </Routes>
     </Router>
   )

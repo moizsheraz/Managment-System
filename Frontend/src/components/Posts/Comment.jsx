@@ -2,28 +2,36 @@ import React, { useState, useEffect } from "react";
 import api from "../../api";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import Loading from "../Loading";
 
 export default function Comment({ postId }) {
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState("");
     const [showComments, setShowComments] = useState(false);
+    const [loading, setLoading] = useState(false);
     const loggedInUser = useSelector((state) => state.auth.userData);
 
+    const fetchComment = async () => {
+        setLoading(true)
+        try {
+        const response = await api.get(`/comment/post/${postId}/`);
+        setComments(response.data);
+        } catch (error) {
+            console.log(error)
+        }
+        finally{
+            setLoading(false);
+        }
+    }
+
     useEffect(() => {
-        // Fetch comments
         if (showComments) {
-            api.get(`/comment/post/${postId}/`)
-                .then((response) => {
-                    setComments(response.data);
-                    // console.log(response.data)
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
+            fetchComment();
         }
     }, [postId, showComments]);
 
     const handleAddComment = async () => {
+        setLoading(true);
         try {
             const response = await api.post(`/comment/post/${postId}/`, { c_text: newComment });
             setComments([...comments, response.data]);
@@ -31,12 +39,15 @@ export default function Comment({ postId }) {
         } catch (error) {
             console.error("There was an error adding the comment!", error);
         }
+        finally{
+            setLoading(false)
+        }
     };
 
     const toggleComments = () => {
         setShowComments(!showComments);
     };
-
+    
     return (
         <div className="mt-4">
             <button
@@ -48,7 +59,7 @@ export default function Comment({ postId }) {
             {showComments && (
                 <div className="mt-4">
                     <h3 className="text-xl font-bold mb-2">Comments</h3>
-                    <div className="space-y-4">
+                    {loading ? <Loading/>  : <div className="space-y-4">
                         {comments.map(comment => (
                             <div key={comment.id} className="bg-gray-100 p-4 rounded-lg">
                                 <p className="text-sm text-gray-600">
@@ -59,7 +70,7 @@ export default function Comment({ postId }) {
                                 <p>{comment.c_text}</p>
                             </div>
                         ))}
-                    </div>
+                    </div>}
                     {loggedInUser && (
                         <div className="mt-4">
                             <textarea
@@ -70,7 +81,7 @@ export default function Comment({ postId }) {
                                 onChange={(e) => setNewComment(e.target.value)}
                             />
                             <button
-                                onClick={handleAddComment}
+                                onClick={handleAddComment} 
                                 className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-200"
                             >
                                 Add Comment

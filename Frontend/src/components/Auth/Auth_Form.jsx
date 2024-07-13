@@ -4,9 +4,11 @@ import { useNavigate, Link } from "react-router-dom";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../varibales";
 import { useDispatch } from "react-redux";
 import { setAuth } from "../../features/auth/authSlice";
+import Loading from "../Loading";
 
 export default function Auth_Form({ method, endpoint }) {
   const [username, setUsername] = useState("");
+  const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -18,6 +20,7 @@ export default function Auth_Form({ method, endpoint }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const response = await api.post(endpoint, {
@@ -41,8 +44,12 @@ export default function Auth_Form({ method, endpoint }) {
     } catch (error) {
       console.log(error);
     } finally {
-      console.log(`Request Made to ${method}`)
+      setLoading(false);
     }
+  }
+
+  if (loading) {
+    return <Loading />
   }
 
   return (

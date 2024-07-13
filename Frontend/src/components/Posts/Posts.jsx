@@ -3,15 +3,18 @@ import api from "../../api";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Comment from "./Comment";
+import Loading from "../Loading";
 
 export default function Posts({ posts }) {
     const [users, setUsers] = useState({});
     const [userPic, setUserPic] = useState({});
+    const [initialPosts, setInitialPosts] = useState(posts);
     const [tags, setTags] = useState({});
     const [menuVisible, setMenuVisible] = useState({});
     const [likedPosts, setLikedPosts] = useState([]);
     const [showLikesModal, setShowLikesModal] = useState(false);
     const [selectedPostLikes, setSelectedPostLikes] = useState([]);
+    const [loading, setLoading] = useState(true);
     const loggedInUser = useSelector((state) => state.auth.userData);
 
     // Fetch liked posts
@@ -21,54 +24,56 @@ export default function Posts({ posts }) {
                 setLikedPosts(response.data.liked_posts);
                 // console.log(response.data)
             })
-
             .catch((error) => {
                 console.log(error);
             });
     };
 
     useEffect(() => {
-        // Fetch users
-        api.get('/api/get_users/')
-            .then((response) => {
+        setLoading(true); 
+        const fetchData = async () => {
+            try {
+                // Fetch users
+                const userResponse = await api.get('/api/get_users/');
                 const userData = {};
                 const userPics = {};
-                // console.log(response.data)
-                response.data.forEach(user => {
+                userResponse.data.forEach(user => {
                     userData[user.id] = user.username;
                     userPics[user.id] = user.profile_pic
                 });
                 setUsers(userData);
                 setUserPic(userPics);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
 
-        // Fetch tags
-        api.get("/api/get_tags/")
-            .then((response) => {
+                // Fetch tags
+                const tagsResponse = await api.get("/api/get_tags/");
                 const tagsData = {};
-                response.data.forEach(post_tag => {
+                tagsResponse.data.forEach(post_tag => {
                     tagsData[post_tag.id] = post_tag.tag;
                 });
                 setTags(tagsData);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
 
-        // Fetch liked posts
-        get_likes();
-    }, [posts]);
+                // Fetch liked posts
+                await get_likes();
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [initialPosts]);
 
     const handleDelete = async (id) => {
+        setLoading(true);
         try {
             await api.delete(`api/delete_post/${id}/`);
-            const newPosts = posts.filter(post => post.id !== id);
-            setPosts(newPosts);
+            // posts = posts.filter(post => post.id !== id);
         } catch (error) {
             console.error("There was an error deleting the post!", error);
+        }
+        finally{
+            setLoading(false);
         }
     };
 
@@ -107,7 +112,9 @@ export default function Posts({ posts }) {
         setSelectedPostLikes([]);
     };
 
-    // console.log(users)
+    if (loading) {
+        return <Loading />;
+    }
 
     return (
         <div className="container mx-auto p-4">
@@ -120,7 +127,7 @@ export default function Posts({ posts }) {
                                 src={`http://127.0.0.1:8000${userPic[post.author]}`}
                                 alt="User avatar"
                                 className="rounded-full h-12 w-12 mr-4"
-                            /> 
+                            />
                             <div>
                                 <p className="text-lg font-semibold">
                                     <Link to={`/profile/${post.author}`} className="text-blue-500 hover:underline">

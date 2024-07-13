@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import api from "../../api";
 import { useParams, useNavigate } from "react-router-dom";
-import {useSelector, useDispatch} from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../../features/auth/authSlice";
 import FollowUnFollow from "../Followers/FollowUnFollow";
 import GetFollowers from "../Followers/GetFollowers";
+import Loading from "../Loading";
 
 export default function UserProfile() {
+    const [loading, setLoading] = useState(false);
     const [user, setUser] = useState({
         username: "",
         email: "",
@@ -25,28 +27,39 @@ export default function UserProfile() {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        api.get(`/api/profile/${id}/`)
-            .then((response) => {
+        const getProfile = async () => {
+            setLoading(true);
+            try {
+                const response = await api.get(`/api/profile/${id}/`);
                 setUser(response.data);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+            } catch (error) {
+                console.error("There was an error fetching the profile!", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        getProfile();
     }, [id, loggedInUser, isAuthenticated]);
 
     const handleUpdate = () => {
         navigate(`/update-profile/${id}`);
     };
 
-    const handleDelete = () => {
-        api.delete("api/delete_profile/")
-            .then(() => {
-                dispatch(logout());
-                navigate("/login");
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+    const handleDelete = async () => {
+        setLoading(true);
+        try {
+            await api.delete("api/delete_profile/")
+                .then(() => {
+                    dispatch(logout());
+                    navigate("/login");
+                })
+        }
+        catch (error) {
+            console.log(error);
+        }
+        finally {
+            setLoading(false);
+        }
     };
 
     const handleShowFollowers = () => {
@@ -56,6 +69,10 @@ export default function UserProfile() {
     const handleCloseFollowersPopup = () => {
         setShowFollowersPopup(false);
     };
+
+    if (loading) {
+        return <Loading />;
+    }
 
     return (
         <div className="max-w-2xl mx-auto my-10 p-6 bg-white rounded-lg shadow-md">
@@ -116,7 +133,7 @@ export default function UserProfile() {
             ) : (
 
                 <div className="mt-8 flex justify-end space-x-4">
-                    {loggedInUser ? <FollowUnFollow userId={id}  /> : null}
+                    {loggedInUser ? <FollowUnFollow userId={id} /> : null}
                     <button
                         onClick={handleShowFollowers}
                         className="px-4 py-2 bg-gray-600 text-white rounded-lg shadow hover:bg-gray-700 transition duration-300"

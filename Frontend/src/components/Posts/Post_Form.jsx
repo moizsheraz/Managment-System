@@ -1,26 +1,33 @@
 import React, { useState, useEffect } from "react";
 import api from "../../api";
 import { useNavigate, useParams } from "react-router-dom";
+import Loading from "../Loading";
 
 export default function Post_Form() {
     const [caption, setCaption] = useState("");
     const [tags, setTags] = useState([]);
     const [selectedTag, setSelectedTag] = useState("");
+    const [loading, setLoading] = useState(true);
     const [image, setImage] = useState(null);
     const navigate = useNavigate();
     const {id} = useParams();
 
     useEffect(() => {
         const fetchTags = async () => {
+            setLoading(true);
             try {
                 const response = await api.get("api/get_tags/");
                 setTags(response.data);
             } catch (error) {
                 console.error("There was an error fetching the tags!", error);
             }
+            finally{
+                setLoading(false);
+            }
         };
 
         const fetchPost = async (e) => {
+            setLoading(true);
             if (id) {
                 try {
                     const response = await api.get(`api/get_post/${id}/`);
@@ -36,6 +43,9 @@ export default function Post_Form() {
                 } catch (error) {
                     console.error("There was an error fetching the post!", error);
                 }
+                finally{
+                    setLoading(false);
+                }
             }
         }
         fetchTags();
@@ -43,7 +53,7 @@ export default function Post_Form() {
     }, [id])
 
     const handleSubmit = async (e) => {
-
+        setLoading(true);
         e.preventDefault();
         const formData = new FormData();
         formData.append("caption", caption);
@@ -73,6 +83,13 @@ export default function Post_Form() {
         catch (error) {
             console.error(`There was an error ${id ? "updating" : "creating"} the post!`, error);
         }
+        finally{
+            setLoading(false);
+        }
+    }
+
+    if (loading) {
+        return <Loading />
     }
 
     return (

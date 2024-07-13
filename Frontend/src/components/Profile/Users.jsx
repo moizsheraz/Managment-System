@@ -3,23 +3,36 @@ import api from "../../api";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import FollowUnFollow from "../Followers/FollowUnFollow";
+import Loading from "../Loading";
 
 export default function Users() {
     const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(true);
     const loggedInUser = useSelector((state) => state.auth.userData);
 
     useEffect(() => {
-        api.get('api/get_profiles/')
-            .then((response) => {
-                setUsers(response.data);
-                // console.log(response.data)
-            })
-            .catch((error) => {
-                console.log(error)
-            })
+        setLoading(true);
+        const fetchData = async () => {
+            try {
+                const response = await api.get('api/get_profiles/')
+                setUsers(response.data)
+            }
+            catch (error) {
+                console.error(error)
+            }
+            finally {
+                console.log("hit")
+                setLoading(false)
+            }
+        }
+        fetchData()
     }, [])
 
     console.log(users)
+
+    if(loading){
+        return <Loading />
+    }
 
     return (
         <div className="container mx-auto p-4">

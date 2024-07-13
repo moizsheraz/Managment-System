@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import api from "../../api";
 import { useParams, useNavigate } from "react-router-dom";
+import Loading from "../Loading";
 
 export default function UpdateProfile() {
+    const [loading, setLoading] = useState(true);
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
@@ -15,8 +17,10 @@ export default function UpdateProfile() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        api.get(`/api/profile/${id}/`)
-            .then((response) => {
+        const getdata = async() => {
+            setLoading(true);
+            try{
+                const response = await api.get(`/api/profile/${id}/`);
                 const { username, email, name, bio, phone_number, address, gender, profile_pic } = response.data;
                 setUsername(username);
                 setEmail(email);
@@ -25,14 +29,20 @@ export default function UpdateProfile() {
                 setPhoneNumber(phone_number);
                 setAddress(address);
                 setGender(gender);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+            }
+            catch(error){
+                console.error("There was an error fetching the profile!", error);
+            }
+            finally{
+                setLoading(false);
+            }
+        }
+        getdata();
     }, [id]);
 
     const handleUpdate = async (e) => {
         e.preventDefault();
+        setLoading(true);
         const formData = new FormData();
         formData.append("username", username);
         formData.append("email", email);
@@ -44,7 +54,6 @@ export default function UpdateProfile() {
         if (profilePic) {
             formData.append("profile_pic", profilePic);
         }
-
         try {
             await api.put(`/api/update_profile/`, formData, {
                 headers: {
@@ -55,7 +64,14 @@ export default function UpdateProfile() {
         } catch (error) {
             console.log(error);
         }
+        finally{
+            setLoading(false);
+        }
     };
+
+    if (loading) {
+        return <Loading />;
+    }
 
     return (
         <div className="max-w-2xl mx-auto my-10 p-6 bg-white rounded-lg shadow-md">
