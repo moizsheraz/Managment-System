@@ -124,7 +124,7 @@ export default function Posts({ posts }) {
                     <div key={post.id} className="bg-white rounded-lg shadow-lg p-6 max-w-xl mx-auto relative">
                         <div className="flex items-center mb-4">
                             <img
-                                src={`http://127.0.0.1:8000${userPic[post.author]}`}
+                                src={`https://full-stack-social-media-wine.vercel.app${userPic[post.author]}`}
                                 alt="User avatar"
                                 className="rounded-full h-12 w-12 mr-4"
                             />
@@ -159,7 +159,7 @@ export default function Posts({ posts }) {
                         </div>
                         <h2 className="text-2xl font-bold mb-2">{post.caption}</h2>
                         {post.image ? (
-                            <img src={`http://127.0.0.1:8000${post.image}`} alt={post.caption} className="rounded-lg mb-4 w-full object-cover h-96" />
+                            <img src={`https://full-stack-social-media-wine.vercel.app${post.image}`} alt={post.caption} className="rounded-lg mb-4 w-full object-cover h-96" />
                         ) : null}
                         {loggedInUser && (
                             <div className="mt-4 flex justify-end">

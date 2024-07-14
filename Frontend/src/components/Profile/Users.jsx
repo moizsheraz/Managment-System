@@ -42,7 +42,7 @@ export default function Users() {
                     <div key={user.id} className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
                         <div className="flex items-center space-x-4">
                             <img
-                                src={`http://127.0.0.1:8000${user.profile_pic}` || "https://via.placeholder.com/150"}
+                                src={`https://full-stack-social-media-wine.vercel.app${user.profile_pic}` || "https://via.placeholder.com/150"}
                                 alt="Profile"
                                 className="w-16 h-16 rounded-full border-2 border-gray-300"
                             />

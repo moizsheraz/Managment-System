@@ -78,7 +78,7 @@ export default function UserProfile() {
         <div className="max-w-2xl mx-auto my-10 p-6 bg-white rounded-lg shadow-md">
             <div className="flex items-center space-x-4">
                 <img
-                    src={`http://127.0.0.1:8000${user.profile_pic}` || "https://via.placeholder.com/150"}
+                    src={`https://full-stack-social-media-wine.vercel.app${user.profile_pic}` || "https://via.placeholder.com/150"}
                     alt="Profile"
                     className="w-32 h-32 rounded-full border-2 border-gray-300"
                 />
